@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.schemas import AgentRequest
-from app.router import get_intent
+from app.intent import get_intent
+from app.planner import get_plan
 
 app = FastAPI()
 
@@ -11,5 +12,10 @@ async def root():
 @app.post("/run-agent")
 async def run_agent(request: AgentRequest):
     result = await get_intent(request.task)
-    print(result)
-    return { "intent": result }
+    if "task" in result["intents"]:
+        task = await get_plan(request.task)
+        return {"task": task}
+    elif "chat" in result["intents"]:
+        return {"message": "Hi! What can I help you with today?"}
+    else:
+        return {"intent": result}
