@@ -5,3 +5,4 @@ class AgentRequest(BaseModel):
     task: str
     history: list
     file: Optional[str] = None
+    session_id: str
